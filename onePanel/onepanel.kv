@@ -1,0 +1,29 @@
+#:kivy 1.10.0
+#
+# MIT License
+# Copyright (c) 2017-2021 Avant Garde Scientific and Industries Technologies [AGSIT]
+#
+# Decription:
+#   This is the "main" layout the GUI window.
+#
+# create a new Kivy class "OnePanelgui" based on GridLayout, see Python class definition.
+# Note: Kivy classes MUST start with a capital and for this "main" class the name must match
+#       exactly with the Python class name used to define the GUI
+<OnePanelgui>:
+  rows: 3
+  # Define properties that can be accessed directly in python instead of using the Kivy "ids"
+  # dictionary to access the various widgets properties. This adds a little bit of overhead
+  # here since the Python properties have to be defined, but it also makes for slightly
+  # cleaner coding since the property "ids" does not have to be called all over the place (this
+  # is not really beneficial if there is only a single Kivy panel in the App, but it can be quite
+  # beneficial when you have multiple levels of sub-panels/classes)
+  #
+  # Python properties
+  fileDiag: kvLytFileDiag
+  statusBar: kvLytStatusBar
+  FileDiag:
+    id: kvLytFileDiag
+  BoxLayout:
+    size_hint_y: 1
+  StatusBar:
+    id: kvLytStatusBar

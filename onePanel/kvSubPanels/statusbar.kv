@@ -1,0 +1,55 @@
+#:kivy 1.10.0
+#
+# MIT License
+# Copyright (c) 2017-2021 Avant Garde Scientific and Industries Technologies [AGSIT]
+#
+# Decription:
+#   This is layout use for a typical status update at the bottom of the UI window to let user know
+#   the latest state of the software.
+#
+# create a new Kivy class "StatusBar" based on BoxLayout.
+# Note: Kivy classes MUST start with a capital.
+<StatusBar@BoxLayout>:
+  # Define properties that can be accessed directly in python instead of using the Kivy "ids"
+  # dictionary to access the various widgets properties. This adds a little bit of overhead
+  # here since the Python properties have to be defined, but it also makes for slightly
+  # cleaner coding since the property "ids" does not have to be called all over the place (this
+  # is not really beneficial if there is only a single Kivy panel/class in the App, but it can
+  # be quite beneficial when you have multiple levels of sub-panels/classes)
+  #
+  # Python properties
+  lblStatusBar: kvLblStatusBar
+  # Layout configuration
+  orientation: 'horizontal'
+  size_hint_y: None
+  height: 25
+  size_hint_x: 1
+  padding: 2
+  spacing: 2
+
+  Label:
+    text: '[b]Status:[/b]'
+    markup: True
+    size_hint_x: None
+    width: 50
+    color: 1, 1, 1, 1
+    halign:'right'
+    # The following line is required to force the label to be refreshed
+    # and displayed correctly after the halign property.
+    text_size: self.size
+
+  Label:
+    id: kvLblStatusBar
+    text: ' New Window'
+    color: 1, 1, 1, .8
+    markup: True
+    # Need to use canvas to change the background color.
+    canvas.before:
+      Color:
+        rgba: .04, .2, .5, 1
+      Rectangle:
+        pos: self.pos
+        size: self.size
+    # The following line is required to force the label to be refreshed
+    # and displayed correctly after the canvas is applied.
+    text_size: self.size
