@@ -46,7 +46,7 @@ class onePanelApp(App):
     else: # The user selected an HDF5 file
       self.root.statusBar.lblStatusBar.text = ' File loaded !'
       # self.ui.ids.kvLytStatusBar.ids.kvLblStatusBar.text = ' File loaded !'
-      self.root.fileDiag.lblFilePath.text = self.fileIO.currentPaths[0]
+      self.root.fileDiag.fileName.lblFilePath.text = self.fileIO.currentPaths[0]
       self.root.fileDiag.selectButton.text = 'Selected File'
 
 

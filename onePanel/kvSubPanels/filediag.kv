@@ -4,8 +4,9 @@
 #   This is a layout use for a typical file selection sub-panel. It has a push button to allow the
 #   user to select a file using a file dialog window and a label showing which file was selected.
 #
-# Author: Francois Charette, Ph.D.
-# Created:  September 27, 2017
+# MIT License
+# Copyright (c) 2017-2021 Avant Garde Scientific and Industries Technologies [AGSIT]
+#
 #===================================================================================================
 # create a new Kivy class "FileDiag" based on BoxLayout.
 # Note: Kivy classes MUST start with a capital.
@@ -18,14 +19,14 @@
   # beneficial when you have multiple levels of sub-panels/classes)
   #
   # Python properties
-  lblFilePath: kvLblFilePath
+  fileName: kvFileName
   selectButton: kvSelectButton
   # Customize some layout attributes
   orientation: 'horizontal'
   size_hint_y: None
-  size_hint_x: 1
   height: 33
-  pos_hint: {'top' : 1}
+  size_hint_x: 1
+  pos_hint: {'top': 1}
   padding: 2
   spacing: 2
 
@@ -34,8 +35,27 @@
     text: 'Select File ...'
     size_hint_x: None
     width: 100
-    # access the method in the python app class, i.e.,
+    # call the method in the python app class, i.e.,
     on_press: app.selectFile()
+
+  # Instantiate a new Kivy sub-class so a sub layout with different backgound color can be
+  # implemented
+  FileName:
+    id: kvFileName
+
+# Kivy sub-class using a BoxLayout
+<FileName@BoxLayout>:
+  lblFilePath: kvLblFilePath
+  orientation: 'horizontal'
+  # Need to use canvas to change the background color.
+  canvas:
+    Color:
+      rgba: 1, 1, 1, 1
+    # Need to slightly adjust the position and size so that the canvas aligns nicely with the
+    # associated button on the left.
+    Rectangle:
+      pos: self.x, self.y+2
+      size: self.width, self.height-2
 
   Label:
     id: kvLblFilePath
@@ -44,17 +64,3 @@
     halign: 'left'
     valign: 'middle'
     markup: True
-    # Need to use canvas to change the background color.
-    canvas.before:
-      Color:
-        rgba: 1, 1, 1, 1
-      Rectangle:
-        pos: self.pos
-        size: self.size
-    # Need to slightly adjust the position and size so that the
-    # canvas align nicely with the associated button on the left.
-    size_hint_y: .96
-    pos_hint: {'y' : .05}
-    # The following line is required to force the label to be refreshed
-    # and displayed correctly after the canvas is applied.
-    text_size: self.size
