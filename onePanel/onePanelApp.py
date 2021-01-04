@@ -2,12 +2,14 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.widget import Widget
+# Custom module for miscellenuous utility classes to support a GUI.
 from kvAPI.guiUtils import userPath
 
 Builder.load_file('kvSubPanels/filediag.kv')      # Layout file for GUI sub-panel
 Builder.load_file('kvSubPanels/statusbar.kv')     # Layout file for GUI sub-panel
 
-
+#======================================== APP class ===============================================#
 class onePanelApp(App):
   """
     Python Kivy App class
@@ -29,48 +31,52 @@ class onePanelApp(App):
     # location and size of the UI window when it was closed so the next time the UI is opened it
     # opens at the same location/size.
     self.fileIO = userPath('onePanel.py')
-    # Instantantiate a OnePanelgui object for the GUI and at the same time also send the reference to
-    # this main app object to the onePanelui object so that properties from both classes can easily
-    # be access from each other.
-    # NOTE: This will assign the GUI object to the Kivy "self.root" keyword, i.e., use
-    #       "self.root" to access all Kivy layouts/widgets/classes.
-    return OnePanelgui(self)
+    # Instantantiate a OnePanelGui object for the GUI and at the same time also send the
+    # reference to this main app object to the onePanelui object so that properties from both
+    # classes can easily be access from each other.
+    # NOTE: This will assign the GUI object to the Kivy "self.root" property, i.e., use
+    #       "self.root" to access all Kivy layouts/widgets/classes.  It is the Kivy "root rule".
+    return OnePanelGui(self)
 
 
   def selectFile(self):
     self.fileIO.fileType = [('text files', ('.txt', '.text')), ('all files', '.*')]
     self.fileIO.pathSelect(pathTag='onePanel')
-    # self.fileIO.appsWriteDfltVal()
     if self.fileIO.numPaths == 0: # User cancelled the selection
       self.root.statusBar.lblStatusBar.text = ' User cancelled selection'
     else: # The user selected an HDF5 file
       self.root.statusBar.lblStatusBar.text = ' File loaded !'
       # self.ui.ids.kvLytStatusBar.ids.kvLblStatusBar.text = ' File loaded !'
-      self.root.fileDiag.fileName.lblFilePath.text = self.fileIO.currentPaths[0]
+      self.root.fileDiag.lblFilePath.text = self.fileIO.currentPaths[0]
       self.root.fileDiag.selectButton.text = 'Selected File'
 
 
 #======================================== GUI class ===============================================#
-class OnePanelgui(GridLayout):
+class OnePanelGui(GridLayout):
   """
-  This is the main/parent Kivy class layout and the name used here MUST match exactly the Kivy
-  class name used in the onepanel.kv file and the name used in the build method of the app.
+  This will instantiate the "root" Kivy property and the name used here MUST match exactly the Kivy
+  class name used in the onepanel.kv file and the name used in the build method of the app class
+  defined above.
   """
   def __init__(self, mainAppRef):
     '''
       Object constructor method used to initiate the UI window.
+
+      Also pass as parameter the App object reference so that any App property or methods can
+      easily be accessed in this class directly if needed.
     '''
     GridLayout.__init__(self)    # instantiate the parent class
     self.app = mainAppRef        # Property to access the App properties easily, e.g., 
                                  # the initialization file where last window properties are saved.
     #------------------------------------ GUI Window properties -----------------------------------#
-    # Set the base window properties
+    # Set the base window properties. Note that Kivy will automatically use this new Window object
     self.uiWindow = Window
     self.uiWindow.borderless = False
-    # Canvases default background
+    # Canvases default background to light blue
     self.uiWindow.clearcolor = ([.01, .2, .36, 1])
     self.uiWindow.bind(on_request_close=self.uiCloseWindow)
-    # Adjust the overall window location & size
+    # Adjust the overall window location & size if the various parameters are available in the
+    # initialization file
     winTmp = self.app.fileIO.appsGetDflt('winTop')
     if winTmp is not None:
       self.uiWindow.top = winTmp
@@ -81,7 +87,9 @@ class OnePanelgui(GridLayout):
     if winTmp is not None:
       self.uiWindow.size = winTmp
     else:
+      # If the size is NOT available, then default it to the following
       self.uiWindow.size = (1000, 500)
+
 
   def uiCloseWindow(self, notUsed):
     """
@@ -90,7 +98,8 @@ class OnePanelgui(GridLayout):
       Callback method that is bind to the "on_request_close", i.e., last method executed before
       the window is actually closed.
     """
-    # Save the current window position
+    # Save the current window position so that the next window re-opens at the same position and
+    # size that the user last left it
     self.app.fileIO.appCfg['winTop'] = self.uiWindow.top
     self.app.fileIO.appCfg['winLeft'] = self.uiWindow.left
     self.app.fileIO.appCfg['winSize'] = self.uiWindow.size
