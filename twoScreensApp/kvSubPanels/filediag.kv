@@ -1,0 +1,59 @@
+#:kivy 1.10.0
+#
+# Decription:
+#   This is a layout use for a typical file selection sub-panel. It has a push button to allow the
+#   user to select a file using a file dialog window and a label showing which file was selected.
+#
+# MIT License
+# Copyright (c) 2017-2021 Avant Garde Scientific and Industries Technologies [AGSIT]
+#
+#===================================================================================================
+# create a new Kivy class "FileDiag" based on BoxLayout.
+# Note: Kivy classes MUST start with a capital.
+<FileDiag@BoxLayout>:
+  # Define properties that can be accessed directly in python instead of using the Kivy "ids"
+  # dictionary to access the various widgets properties. This adds a little bit of overhead
+  # here since the Python properties have to be defined, but it also makes for slightly
+  # cleaner coding on the Python side since the property "ids" does not have to be called all over
+  # the place (this is not really beneficial if there is only a single Kivy panel in the App, but
+  # it can be quite beneficial when there are multiple levels of sub-panels/classes)
+  #
+  # Python properties
+  # fileName: kvFileName
+  selectButton: kvSelectButton
+  lblFilePath: kvLblFilePath
+  # Customize some layout attributes
+  orientation: 'horizontal'
+  size_hint_y: None
+  height: 33
+  size_hint_x: 1
+  pos_hint: {'top': 1}
+  padding: 2
+  spacing: 2
+
+  # Push button to open a file select dialog
+  Button:
+    id: kvSelectButton
+    text: ' Select File ...'
+    size_hint_x: None
+    width: 100
+    # call the method in the python app class, i.e.,
+    on_press: app.selectFile()
+
+  # Label use to display the full path of the selected file
+  Label:
+    # Use a canvas.before to control the background color of the text
+    canvas.before:
+      Color:
+        rgba: 1, 1, 1, 1
+      # Need to slightly adjust the position and size so that the canvas aligns nicely with the
+      # associated button on the left.
+      Rectangle:
+        pos: self.x, self.y+2
+        size: self.width, self.height-2
+    id: kvLblFilePath
+    text: '  No file selected.'
+    color: 0, 0, 0, 1
+    halign: 'left'
+    valign: 'middle'
+    markup: True
